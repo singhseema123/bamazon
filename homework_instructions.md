@@ -46,10 +46,11 @@ CREATE DATABASE bamazon;
 USE bamazon;
 CREATE TABLE products (
     item_id INTEGER AUTO_INCREMENT NOT NULL,
-    product_name VARCHAR(30) NOT NULL,
+    product_name VARCHAR(50) NOT NULL,
     department_name VARCHAR(30) NOT NULL,
-    price DECIMAL NOT NULL,
+    price DECIMAL(5,3) NOT NULL,
     stock_quantity INTEGER NOT NULL,
+    product_sales DECIMAL(7,3),
     PRIMARY KEY (item_id)
 );
 
@@ -123,7 +124,16 @@ INSERT INTO products(product_name,department_name,price,stock_quantity) VALUES (
    * department_name
 
    * over_head_costs (A dummy number you set for each department)
-
+USE bamazon;
+CREATE TABLE departments (
+    department_id INTEGER AUTO_INCREMENT NOT NULL,
+    department_name VARCHAR(30) NOT NULL,
+    over_head_costs DECIMAL(5,3) NOT NULL,
+    PRIMARY KEY (department_id)
+);
+INSERT INTO departments (department_name,over_head_costs) VALUES ('Board Games', 32.431);
+INSERT INTO departments (department_name,over_head_costs) VALUES ('Video Games', 55.301);
+INSERT INTO departments (department_name,over_head_costs) VALUES ('Travel Games', 36.441);
 2. Modify the products table so that there's a product_sales column, and modify your `bamazonCustomer.js` app so that when a customer purchases anything from the store, the price of the product multiplied by the quantity purchased is added to the product's product_sales column.
 
    * Make sure your app still updates the inventory listed in the `products` column.

@@ -17,7 +17,7 @@ Before you start, you will need to do the following:
 4. Setup MySQL server and MySQL workbench from the following link: https://dev.mysql.com/downloads/workbench/ and setup configure your connect method, hostname, user id, and password on the Database->Connect to Database tab.
 5. Setup the product schema and set the products in the products table by running the following sql commands:
 
-Create a MySQL Database called `bamazon` and a products tables:
+Create a MySQL Database called `bamazon` and a products and a departments table:
 
 DROP DATABASE IF EXISTS bamazon;
 CREATE DATABASE bamazon;
@@ -26,8 +26,9 @@ CREATE TABLE products (
     item_id INTEGER AUTO_INCREMENT NOT NULL,
     product_name VARCHAR(30) NOT NULL,
     department_name VARCHAR(30) NOT NULL,
-    price DECIMAL NOT NULL,
+    price DECIMAL(5,2) NOT NULL,
     stock_quantity INTEGER NOT NULL,
+    product_sales DECIMAL(5,2), 
     PRIMARY KEY (item_id)
 );
 
@@ -44,10 +45,20 @@ INSERT INTO products(product_name,department_name,price,stock_quantity) VALUES (
 INSERT INTO products(product_name,department_name,price,stock_quantity) VALUES ('Regal Games Original Travel Bingo 4 Packs','Travel Games',7.99,10);
 INSERT INTO products(product_name,department_name,price,stock_quantity) VALUES ('Connect 4 Grab and Go Games - Travel Size','Travel Games',4.97,15);
 
+USE bamazon;
+CREATE TABLE departments (
+    department_id INTEGER AUTO_INCREMENT NOT NULL,
+    department_name VARCHAR(30) NOT NULL,
+    over_head_costs DECIMAL(5,3) NOT NULL,
+    PRIMARY KEY (department_id)
+);
+INSERT INTO departments (department_name,over_head_costs) VALUES ('Board Games', 32.431);
+INSERT INTO departments (department_name,over_head_costs) VALUES ('Video Games', 55.301);
+INSERT INTO departments (department_name,over_head_costs) VALUES ('Travel Games', 36.441);
 
 # Usage
-1. Invoke bamazon as follows from terminal: 
-##### `node bamazon.js`
+1. Customer Front End: Invoke bamazon Customer front end as follows from terminal: 
+##### `node bamazoncustomer.js`
    * Running this command will first display all of the items available for sale. The app then prompts users with two messages.
    * The first asks them the ID of the product they would like to buy.
    * The second message asks how many units of the product they would like to buy. 
@@ -62,8 +73,45 @@ INSERT INTO products(product_name,department_name,price,stock_quantity) VALUES (
 8. However, if your store _does_ have enough of the product, it fulfills the customer's order.
    * It updates the SQL database to reflect the remaining quantity.
    * Once the update goes through, it shows the customer the total cost of their purchase. 
+   * And finally, it updates the product_sales column by adding the ordered quantity * price of that sku to the current product_sales amount.
    * Please see image below for details of this success path.
 
 
 ![Image of this experience](./images/successful_transaction.PNG)
 ![Image of this experience](./images/successful_2.PNG)
+
+
+9. Manager Front end: Invoke manager front end as follows to experience the store manager workflow:
+##### `node bamazonManager.js`. Running this application will. Running this application provides the following options:
+
+    * View Products for Sale
+    
+    * View Low Inventory
+    
+    * Add to Inventory
+    
+    * Add New Product
+
+  * If a manager selects `View Products for Sale`, the app will list every available item: the item IDs, names, prices, and quantities.
+  ![Image of this experience](./images/managerview_productlist.PNG)
+
+
+  * If a manager selects `View Low Inventory`, then it will list all items with an inventory count lower than five.
+  ![Image of this experience](./images/managerview_lowinventory.PNG)   
+
+  * If a manager selects `Add to Inventory`, this app will display a prompt that will let the manager "add more" of any item currently in the store.
+  ![Image of this experience](./images/managerview_addinventory.PNG)  
+  ![Image of this experience](./images/viewupdated_inventory.PNG)  
+
+  * If a manager selects `Add New Product`, the app will allow the manager to add a completely new product to the store.
+  ![Image of this experience](./images/managerview_addproduct.PNG)  
+  ![Image of this experience](./images/viewadded_product.PNG)
+
+10. Supervisor front end: Invoke the supervisor experience as follows:
+##### `node bamazonSupervisor.js`. This will list a set of menu options:
+
+   * View Product Sales by Department: Selecting this option will display a summarized table with dept_id, dept_name, overhead costs, product_sales, and total profit for each product, ordered by department. The `total_profit` column is calculated on the fly using the difference between `over_head_costs` and `product_sales`.
+    ![Image of this experience](./images/superview_fulllist.PNG)
+   * Create New Department: This option will allow the supervisor to add a new department to the departments table.
+    ![Image of this experience](./images/superview_newdept.PNG)
+        ![Image of this experience](./images/superview_viewnewdept.PNG)
